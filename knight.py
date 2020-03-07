@@ -3,14 +3,14 @@ from piece import Piece
 import pygame
 
 class Knight(Piece):
-    def __init__(self, window, white, xpos, ypos, sprite):
-        super().__init__(window, white, xpos, ypos, sprite)
+    def __init__(self, window, white, xPos, yPos, sprite):
+        super().__init__(window, white, xPos, yPos, sprite)
 
 
-    def possible_moves(self, board):
+    def Possible_moves(self, board):
         moves = []
-        moves.extend([(x + self.xpos, y + self.ypos) for x in [2, -2] for y in [1, -1]])
-        moves.extend([(x + self.xpos, y + self.ypos) for y in [2, -2] for x in [1, -1]])
+        moves.extend([(x + self.xPos, y + self.yPos, "N") for x in [2, -2] for y in [1, -1]])
+        moves.extend([(x + self.xPos, y + self.yPos, "N") for y in [2, -2] for x in [1, -1]])
         removals = []
         for move in moves:
             if move[0] < 0 or move[0] > 7 or move[1] < 0 or move[1] > 7:
@@ -31,6 +31,6 @@ class Knight(Piece):
         # if self.drawn:
         #   return False
 
-        self.window.blit(self.sprite, (self.xpos * 80 + 30, self.ypos * 80 + 30))
+        self.window.blit(self.sprite, (self.xPos * 80 + 30, self.yPos * 80 + 30))
         self.drawn = False
         return True

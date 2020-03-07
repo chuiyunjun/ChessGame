@@ -1,35 +1,33 @@
 from piece import Piece
+
 from rook import Rook
+
 import pygame
 
 class King(Piece):
-    def __init__(self, window, white, xpos, ypos, sprite):
-        super().__init__(window, white, xpos, ypos, sprite)
-        self.moved = False
+    def __init__(self, window, white, xPos, yPos, sprite):
+        super().__init__(window, white, xPos, yPos, sprite)
 
-    def possible_moves(self, board):
-        moves = [(x + self.xpos, y + self.ypos) for x in [1, 0 -1] for y in [1, 0 -1]]
-        moves.remove((self.xpos, self.ypos))
+    def Possible_moves(self, board):
+        moves = [(x + self.xPos, y + self.yPos, "N") for x in [1, 0, -1] for y in [1, 0, -1]]
+        moves.remove((self.xPos, self.yPos, "N"))
 
         # check castling
-        if self.moved:
-            pass
-        elif self.white:
+        if self.white:
             rook1 = board[0][7]
             rook2 = board[7][7]
-            # add castling
-            if isinstance(rook1, Rook) and not rook1.moved and rook1.white:
-                pass
-            if isinstance(rook2, Rook) and not rook2.moved and rook2.white:
-                pass
         else:
             rook1 = board[0][0]
             rook2 = board[7][0]
-            # add castling
-            if isinstance(rook1, Rook) and not rook1.moved and not rook1.white:
-                pass
-            if isinstance(rook2, Rook) and not rook1.moved and not rook1.white:
-                pass
+
+        # check for contested and check and blocks in the way
+        if isinstance(rook1, Rook) and not rook1.moved and not self.moved and \
+            all(board[i][self.yPos] is None for i in range(1, 4)):
+            moves.append((2, self.yPos, "C"))
+
+        if isinstance(rook2, Rook) and not rook2.moved and not self.moved and \
+            all(board[i][self.yPos] is None for i in range(5, 7)):
+            moves.append((6, self.yPos, "C"))
 
         removals = []
         for move in moves:
@@ -45,6 +43,6 @@ class King(Piece):
         # if self.drawn:
         #   return False
 
-        self.window.blit(self.sprite, (self.xpos * 80 + 30, self.ypos * 80 + 30))
+        self.window.blit(self.sprite, (self.xPos * 80 + 30, self.yPos * 80 + 30))
         self.drawn = False
         return True

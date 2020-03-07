@@ -3,21 +3,20 @@ from piece import Piece
 import pygame
 
 class Rook(Piece):
-    def __init__(self, window, white, xpos, ypos, sprite):
-        super().__init__(window, white, xpos, ypos, sprite)
-        self.moved = False
+    def __init__(self, window, white, xPos, yPos, sprite):
+        super().__init__(window, white, xPos, yPos, sprite)
 
-    def possible_moves(self, board):
+    def Possible_moves(self, board):
         moves = []
         for increment in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-            currX = self.xpos + increment[0]
-            currY = self.ypos + increment[1]
+            currX = self.xPos + increment[0]
+            currY = self.yPos + increment[1]
             while 0 <= currX <= 7 and 0 <= currY <= 7:
                 if board[currX][currY] is None:
-                    moves.append((currX, currY))
+                    moves.append((currX, currY, "N"))
 
                 elif board[currX][currY].white is not self.white:
-                    moves.append((currX, currY))
+                    moves.append((currX, currY, "N"))
                     break
 
                 else:
@@ -25,7 +24,6 @@ class Rook(Piece):
 
                 currX += increment[0]
                 currY += increment[1]
-                print(currX, currY)
 
         return moves
 
@@ -33,6 +31,6 @@ class Rook(Piece):
         # if self.drawn:
         #   return False
 
-        self.window.blit(self.sprite, (self.xpos * 80 + 30, self.ypos * 80 + 30))
+        self.window.blit(self.sprite, (self.xPos * 80 + 30, self.yPos * 80 + 30))
         self.drawn = False
         return True

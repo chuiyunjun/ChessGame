@@ -13,7 +13,7 @@ def create_board():
 
 def play():
     chess_board = create_board()
-    selected = None
+    selected = False
     while True:
         chess_board.draw_board()
         for event in pygame.event.get():
@@ -21,23 +21,12 @@ def play():
                 pos = pygame.mouse.get_pos()
                 indexXpos = (pos[0] - 30) // 80
                 indexYpos = (pos[1] - 30) // 80
-                print(indexXpos, indexYpos)
-                if selected is None:
-                    selected = chess_board.get_item(indexXpos, indexYpos)
-                    print(selected)
+                if not selected:
+                    selected = chess_board.select_piece(indexXpos, indexYpos)
 
                 else:
-                    initalx = selected.xpos
-                    initaly = selected.ypos
-
-                    board = chess_board.get_board()
-                    print(selected.possible_moves(board))
-                    print(selected.xpos, selected.ypos)
-                    if selected.move_piece(indexXpos, indexYpos, board):
-                        board[selected.xpos][selected.ypos] = selected
-                        board[initalx][initaly] = None
-                    selected = None
-
+                    moved = chess_board.move(indexXpos, indexYpos)
+                    selected = False
 
 
 if __name__ == '__main__':

@@ -3,48 +3,48 @@ from piece import Piece
 import pygame
 
 class Pawn(Piece):
-    def __init__(self, window, white, xpos, ypos, sprite):
-        super().__init__(window, white, xpos, ypos, sprite)
-        self.moved = False
+    def __init__(self, window, white, xPos, yPos, sprite):
+        super().__init__(window, white, xPos, yPos, sprite)
+        self.doubleMoveLast = False;
 
 
-    def possible_moves(self, board):
+    def move_piece(self, xPos, yPos, board):
+        originalYPos = self.yPos
+        successfulMove = super().move_piece(xPos, yPos, board)
+        if successfulMove is not None and self.doubleMoveLast:
+            self.doubleMoveLast = False
+
+        if successfulMove is not None and abs(yPos - originalYPos) == 2:
+            self.doubleMoveLast = True
+        return successfulMove
+
+    def Possible_moves(self, board):
         moves = []
+        change = 1
         if self.white:
-            # single move
-            if board[self.xpos][self.ypos - 1] is None:
-                moves.append((self.xpos, self.ypos - 1))
+            change = -1
 
-            # double move
-            if not self.moved:
-                moves.append((self.xpos, self.ypos - 2))
+        # single move
+        if board[self.xPos][self.yPos + change] is None:
+            moves.append((self.xPos, self.yPos + change, "N"))
 
-            # capture move
-            for inc in [1, -1]:
-                if not (0 <= self.xpos + inc <= 7):
-                    pass
-                elif board[self.xpos + inc][self.ypos - 1] is not None and \
-                    board[self.xpos + inc][self.ypos - 1].white != self.white:
-                    moves.append((self.xpos + inc, self.ypos - 1))
+        # double move
+        if not self.moved:
+            moves.append((self.xPos, self.yPos + change * 2, "N"))
 
-            print(moves)
+        # capture move
+        for inc in [1, -1]:
+            if not (0 <= self.xPos + inc <= 7):
+                continue
 
-        else:
-            # single move
-            if board[self.xpos][self.ypos + 1] is None:
-                moves.append((self.xpos, self.ypos + 1))
+            if board[self.xPos + inc][self.yPos + change] is not None and \
+                board[self.xPos + inc][self.yPos + change].white != self.white:
+                moves.append((self.xPos + inc, self.yPos + change, "N"))
 
-            # double move
-            if not self.moved:
-                moves.append((self.xpos, self.ypos + 2))
-
-            # capture move
-            for inc in [1, -1]:
-                if not (0 <= self.xpos + inc <= 7):
-                    pass
-                elif board[self.xpos + inc][self.ypos + 1] is not None and \
-                    board[self.xpos + inc][self.ypos + 1].white != self.white:
-                    moves.append((self.xpos + inc, self.ypos + 1))
+            if isinstance(board[self.xPos + inc][self.yPos], Pawn) and \
+                board[self.xPos + inc][self.yPos].white != self.white and \
+                board[self.xPos + inc][self.yPos].doubleMoveLast:
+                moves.append((self.xPos + inc, self.yPos + change, "E"))
 
         removals = []
         for move in moves:
@@ -60,6 +60,6 @@ class Pawn(Piece):
         # if self.drawn:
         #   return False
 
-        self.window.blit(self.sprite, (self.xpos * 80 + 30, self.ypos * 80 + 30))
+        self.window.blit(self.sprite, (self.xPos * 80 + 30, self.yPos * 80 + 30))
         self.drawn = False
         return True
